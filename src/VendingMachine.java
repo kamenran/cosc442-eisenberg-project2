@@ -60,8 +60,8 @@ public class VendingMachine {
 	 */
 	public VendingMachine() {
 		itemArray = new VendingMachineItem[NUM_SLOTS];
-		for (int i = 0; i <= NUM_SLOTS; i++) {
-			itemArray[i] = null;
+		for (int i = 0; i < NUM_SLOTS; i++) {	
+				itemArray[i] = null;
 		}
 		this.balance = INITIAL_BALANCE;
 	}
