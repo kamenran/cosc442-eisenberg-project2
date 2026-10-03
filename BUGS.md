@@ -47,3 +47,5 @@
   The exact-payment test uses 1.50 for both. The free-item test uses
   zero balance and zero price. Both should allow  purchase, so
   the failures show that the tests detect the fault.
+- Restoration: Removed the injected-fault comment and restored >=.
+- Verification: Reran the full test suite; all tests passed.
