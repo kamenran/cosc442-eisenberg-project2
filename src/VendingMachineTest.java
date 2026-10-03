@@ -147,4 +147,144 @@ public void slotOperationsRejectInvalidCodes(String code) {
                 () -> machine.makePurchase(code))
     );
 }
+@Test
+public void insertMoneyAccumulatesDeposits() {
+    // Arrange
+    VendingMachine machine = new VendingMachine();
+
+    // Act
+    machine.insertMoney(0.50);
+    machine.insertMoney(1.25);
+
+    // Assert
+    assertEquals(1.75, machine.getBalance(), 0.000001);
+}
+
+@Test
+public void getBalanceDoesNotChangeBalance() {
+    // Arrange
+    VendingMachine machine = new VendingMachine();
+    machine.insertMoney(2.0);
+
+    // Act
+    double first = machine.getBalance();
+    double second = machine.getBalance();
+
+    // Assert
+    assertEquals(2.0, first, 0.000001);
+    assertEquals(first, second, 0.000001);
+}
+
+@Test
+public void purchaseWithEnoughMoneyRemovesItemAndDeductsPrice() {
+    // Arrange
+    VendingMachine machine = new VendingMachine();
+    machine.addItem(new VendingMachineItem("Snack", 1.50), "A");
+    VendingMachineItem other = new VendingMachineItem("Drink", 2.0);
+    machine.addItem(other, "B");
+    machine.insertMoney(2.0);
+
+    // Act
+    boolean purchased = machine.makePurchase("A");
+
+    // Assert
+    assertTrue(purchased);
+    assertNull(machine.getItem("A"));
+    assertEquals(0.50, machine.getBalance(), 0.000001);
+    assertSame(other, machine.getItem("B"));
+}
+
+@Test
+public void purchaseWithExactBalanceSucceeds() {
+    // Arrange
+    VendingMachine machine = new VendingMachine();
+    machine.addItem(new VendingMachineItem("Snack", 1.50), "A");
+    machine.insertMoney(1.50);
+
+    // Act
+    boolean purchased = machine.makePurchase("A");
+
+    // Assert
+    assertTrue(purchased);
+    assertNull(machine.getItem("A"));
+    assertEquals(0.0, machine.getBalance(), 0.000001);
+}
+
+@Test
+public void purchaseWithInsufficientMoneyPreservesState() {
+    // Arrange
+    VendingMachine machine = new VendingMachine();
+    VendingMachineItem item = new VendingMachineItem("Snack", 1.50);
+    machine.addItem(item, "A");
+    machine.insertMoney(1.49);
+
+    // Act
+    boolean purchased = machine.makePurchase("A");
+
+    // Assert
+    assertFalse(purchased);
+    assertSame(item, machine.getItem("A"));
+    assertEquals(1.49, machine.getBalance(), 0.000001);
+}
+
+@Test
+public void purchaseFromEmptySlotPreservesBalance() {
+    // Arrange
+    VendingMachine machine = new VendingMachine();
+    machine.insertMoney(2.0);
+
+    // Act
+    boolean purchased = machine.makePurchase("A");
+
+    // Assert
+    assertFalse(purchased);
+    assertNull(machine.getItem("A"));
+    assertEquals(2.0, machine.getBalance(), 0.000001);
+}
+
+@Test
+public void purchaseOfFreeItemSucceeds() {
+    // Arrange
+    VendingMachine machine = new VendingMachine();
+    machine.addItem(new VendingMachineItem("Free sample", 0.0), "D");
+
+    // Act
+    boolean purchased = machine.makePurchase("D");
+
+    // Assert
+    assertTrue(purchased);
+    assertNull(machine.getItem("D"));
+    assertEquals(0.0, machine.getBalance(), 0.000001);
+}
+
+@Test
+public void returnChangeReturnsBalanceAndResetsIt() {
+    // Arrange
+    VendingMachine machine = new VendingMachine();
+    machine.addItem(new VendingMachineItem("Snack", 1.50), "A");
+    machine.insertMoney(2.0);
+    machine.makePurchase("A");
+
+    // Act
+    double change = machine.returnChange();
+
+    // Assert
+    assertEquals(0.50, change, 0.000001);
+    assertEquals(0.0, machine.getBalance(), 0.000001);
+    assertEquals(0.0, machine.returnChange(), 0.000001);
+}
+
+@Test
+public void returnChangeFromEmptyBalanceReturnsZero() {
+    // Arrange/*  */
+    VendingMachine machine = new VendingMachine();
+
+    // Act
+    double change = machine.returnChange();
+
+    // Assert
+    assertEquals(0.0, change, 0.000001);
+    assertEquals(0.0, machine.getBalance(), 0.000001);
+}
+
 }
