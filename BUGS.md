@@ -33,3 +33,17 @@
 - Fix: Changed each comparison to CONSTANT.equals(code), allowing
   null to reach the invalid-code exception.
 - Verification: All tests passed.
+
+## Test sensitivity check: Injected purchase fault
+
+- Temporary change: Replaced balance >= item.getPrice() with
+  balance > item.getPrice().
+- Marked with: // INJECTED FAULT FOR TEST VALIDATION
+- purchaseWithExactBalanceSucceeds failed:
+  org.opentest4j.AssertionFailedError: expected: [true] but was: [false]
+- purchaseOfFreeItemSucceeds failed:
+  org.opentest4j.AssertionFailedError: expected: [true] but was: [false]
+- Explanation: The  > comparison rejects equal balance and price.
+  The exact-payment test uses 1.50 for both. The free-item test uses
+  zero balance and zero price. Both should allow  purchase, so
+  the failures show that the tests detect the fault.
