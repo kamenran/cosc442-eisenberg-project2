@@ -77,13 +77,13 @@ public class VendingMachine {
 	 * @throws VendingMachineException
 	 */
 	private int getSlotIndex(String code) throws VendingMachineException {
-		if (code.equals(A_CODE)) {
+		if (A_CODE.equals(code)) {
 			return 0;
-		} else if (code.equals(B_CODE)) {
+		} else if (B_CODE.equals(code)) {
 			return 1;
-		} else if (code.equals(C_CODE)) {
+		} else if (C_CODE.equals(code)) {
 			return 2;
-		} else if (code.equals(D_CODE)) {
+		} else if (D_CODE.equals(code)) {
 			return 3;
 		} else {
 			throw new VendingMachineException(VendingMachine.INVALID_CODE_MESSAGE);

@@ -22,3 +22,14 @@
   the exception statement. The condition rejected valid amounts.
 - Fix: Changed amount < 1 to amount < 0.
 - Verification: The constructor test and all eight deposit cases passed.
+
+## Bug 3: Null slot codes throw the wrong exception
+
+- Test: slotOperationsRejectInvalidCodes, null input.
+- Expected: VendingMachineException for add, get, remove, and purchase.
+- Actual: All four operations threw NullPointerException.
+- Diagnosis: A breakpoint in getSlotIndex showed code = null.
+  Calling code.equals(...) dereferenced null.
+- Fix: Changed each comparison to CONSTANT.equals(code), allowing
+  null to reach the invalid-code exception.
+- Verification: All tests passed.
